@@ -1,4 +1,4 @@
-# jenkins-performance-crawler
+# Jenkins Performance Plugin Crawler
 
     Currently supported Crawler Options are:
         
