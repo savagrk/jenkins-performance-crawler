@@ -47,14 +47,18 @@
         
 ## Limitations:
    
-* - If there isn't Previous Jenkins Test Run Previous Response Time will be invalid because it will be the same as Current Response Time
-* - Sheet Names, Request and Suite Title Graph Names are limited to 31 chars due to Excel limitations
-* - Request and Test Names shouldn't contain next chars: '[]:*?/\\'
-* - For paralel comparison of results don't used more than four links due to formatting issues
+*  If there isn't Previous Jenkins Test Run Previous Response Time will be invalid because it will be the same as Current Response Time
+*  Sheet Names, Request and Suite Title Graph Names are limited to 31 chars due to Excel limitations
+*  Request and Test Names shouldn't contain next chars: '[]:*?/\\'
+*  For paralel comparison of results don't used more than four links due to formatting issues
         
 ## Required Python Libraries:
    
-        -
+* pandas (v.23.4 or lower)
+* requests
+* beautifulsoup4
+* lxml
+* XlxsWriter
         
 ## Author
 
