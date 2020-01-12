@@ -62,4 +62,4 @@ Sava Grkovic - [github](https://github.com/savagrk)
 
 ## License
 
-This project is licensed under the [MIT license](/LICENSE.md).
+This project is licensed under the [MIT license](/LICENSE).
