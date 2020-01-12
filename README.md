@@ -1,6 +1,6 @@
 # Jenkins Performance Plugin Results Crawler
 
-   #Currently supported Crawler Options are:
+   # Currently supported Crawler Options are:
         
         1 - Responses over entered Threshold, Request Responses Better than Previous Job, 
             Request Responses Worse than Previous Job and Error Request Results in single Excel File
@@ -29,7 +29,7 @@
         12 - Trend Compared Responses and Deviations for Two provided URLs per Test
         
         
-   #Data Type options:
+   # Data Type options:
         
         1 - Use Average Response Time Data
         
@@ -45,13 +45,21 @@
         
         7 - For Getting 99 Percentiles Response Time Data
         
-   #Limitations:
+   # Limitations:
    
         - If there isn't Previous Jenkins Test Run Previous Response Time will be invalid because it will be the same as Current Response Time
         - Sheet Names, Request and Suite Title Graph Names are limited to 31 chars due to Excel limitations
         - Request and Test Names shouldn't contain next chars: '[]:*?/\\'
         - For paralel comparison of results don't used more than four links due to formatting issues
         
-   #Required Python Libraries:
+   # Required Python Libraries:
    
         -
+        
+   # Author
+
+        Sava Grkovic - [github](https://github.com/savagrk)
+
+   # License
+
+        This project is licensed under the [MIT license](/LICENSE.md).
