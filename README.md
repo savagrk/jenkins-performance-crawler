@@ -1,6 +1,6 @@
 # Jenkins Performance Plugin Results Crawler
 
-Crawler for parsing and comparison of Performance Results obtain by Jenkins Performance Plugin Results.
+Crawler for parsing and comparison of Performance Results obtain by Jenkins Performance Plugin.
 
 ## Usage
 
