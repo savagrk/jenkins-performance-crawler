@@ -6,7 +6,7 @@ Crawler for parsing and comparison of Performance Results obtain by Jenkins Perf
 
 In DataProcessor.py set **URLs**, **crawler_option**, **data_type** and **threshold** values and run the script. 
 
-**URLs** - URLs that will be used for getting results,
+**URLs** - Jenkins Performance Plugin URLs that will be used for getting results,
 
 **crawler_option** - which mode of commparison will be used,
 
