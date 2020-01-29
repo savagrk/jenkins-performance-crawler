@@ -64,7 +64,7 @@ In DataProcessor.py set **URLs**, **crawler_option**, **data_type** and **thresh
 *  If there isn't Previous Jenkins Test Run Previous Response Time will be invalid because it will be the same as Current Response Time,
 *  Sheet Names, Request and Suite Title Graph Names are limited to 31 chars due to Excel limitations,
 *  Request and Test Names shouldn't contain next chars: '[]:*?/\\'
-*  For paralel comparison of results don't used more than four links due to Excel formatting issues.
+*  For paralel comparison of results don't used more than five links due to Excel graph formatting limitations.
         
 ## Required Python Libraries:
    
