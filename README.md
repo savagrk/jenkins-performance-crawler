@@ -66,8 +66,9 @@ In DataProcessor.py set **URLs**, **crawler_option**, **data_type** and **thresh
 *  Request and Test Names shouldn't contain next chars: '[]:*?/\\'
 *  For paralel comparison of results don't used more than five links due to Excel graph formatting limitations.
         
-## Required Python Libraries:
+## Required Python and Libraries:
    
+* Python 3.7
 * pandas (v.23.4 or lower),
 * requests,
 * beautifulsoup4,
