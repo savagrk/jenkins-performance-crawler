@@ -6,10 +6,11 @@
  =======================================================================================================================
  File name: JenkinsCrawler.py
  Author: Sava Grkovic
+ Team: Integration QA
  Create Date: 17/9/2018
  Purpose: Definition of Jenkins Data Crawler options and functions
  =======================================================================================================================
- Last Modified: 11/4/2019
+ Last Modified: 30/1/2020
  Modified by: Sava Grkovic
 ========================================================================================================================
 '''
@@ -23,7 +24,8 @@ parser = Parser.DataParser()
 
 class JenkinsCrawler:
 
-    def responses_over_entered_threshold(self, urls, threshold, data_type):
+    @staticmethod
+    def responses_over_entered_threshold(urls, threshold, data_type):
 
         i = 1
         for url in urls:
@@ -34,7 +36,8 @@ class JenkinsCrawler:
             parser.excel_table(response_table, sheet_name, suite_title + " - Response Time.xlsx", 1)
             i += 1
 
-    def deviations_to_previous_build(self, urls, data_type):
+    @staticmethod
+    def deviations_to_previous_build(urls, data_type):
 
         i = 1
         for url in urls:
@@ -45,7 +48,8 @@ class JenkinsCrawler:
             parser.excel_two_tables(better_table, worse_table, sheet_name, suite_title + " - Deviations.xlsx", 1)
             i += 1
 
-    def request_errors(self, urls):
+    @staticmethod
+    def request_errors(urls):
 
         i = 1
         for url in urls:
@@ -56,7 +60,8 @@ class JenkinsCrawler:
             parser.excel_table(errors_table, sheet_name, suite_title + " - Errors.xlsx")
             i += 1
 
-    def responses_deviations_errors(self, urls, threshold, data_type):
+    @staticmethod
+    def responses_deviations_errors(urls, threshold, data_type):
 
         i = 1
         for url in urls:
@@ -73,7 +78,8 @@ class JenkinsCrawler:
             parser.excel_four_tables(response_table, errors_table, better_table, worse_table, response_sheet_name, suite_title + ".xlsx", 1)
             i += 1
 
-    def request_responses_stage_view(self, urls, threshold, data_type):
+    @staticmethod
+    def request_responses_stage_view(urls, threshold, data_type):
 
         i = 1
         for url in urls:
@@ -82,41 +88,47 @@ class JenkinsCrawler:
             suite_title = "Suite#" + str(i) + " " + suite_title
             sheet_name.append(suite_title[:31])
             request, response, previous, deviation, response_rows = parser.response_parser(tables, data_type)
-            response_table, deviation_table = parser.response_by_request_stage_results(suite_title, titles, request, response, previous, deviation, response_rows, threshold)
-            parser.excel_two_tables(response_table, deviation_table, sheet_name, suite_title + " - StageCompared.xlsx", 2)
+            response_table, deviation_table = parser.response_by_request_stage_results(suite_title, titles, request, response, deviation, response_rows, threshold)
+            parser.excel_two_tables(response_table, deviation_table, sheet_name, suite_title + " - StageCompared.xlsx", 3)
             i += 1
 
-    def request_responses_across_urls(self, urls, threshold, data_type):
+    @staticmethod
+    def request_responses_across_urls(urls, threshold, data_type):
 
         suite_list, test_list, request_list, data = parser.urls_response_parser(urls, data_type)
-        response_table, deviation_table, sheet_names = parser.response_by_request_accross_urls_results(suite_list, test_list, request_list, data, threshold)
+        response_table, deviation_table, sheet_names = parser.response_by_request_across_urls_results(suite_list, test_list, request_list, data, threshold)
         parser.excel_two_tables(response_table, deviation_table, sheet_names, "Jenkins Performance Builds - RequestsCompared.xlsx", 2)
 
-    def test_responses_accross_urls(self, urls, threshold, data_type):
+    @staticmethod
+    def test_responses_accross_urls(urls, threshold, data_type):
 
         suite_list, test_list, request_list, data = parser.urls_response_parser(urls, data_type)
-        response_table, deviation_table, sheet_names = parser.response_by_test_accross_urls_results(suite_list, test_list, request_list, data, threshold)
+        response_table, deviation_table, sheet_names = parser.response_by_test_across_urls_results(suite_list, test_list, request_list, data, threshold)
         parser.excel_two_tables(response_table, deviation_table, sheet_names, "Jenkins Performance Builds - TestCompared.xlsx", 2)
 
-    def request_trend_responses_across_urls(self, urls, threshold, data_type):
+    @staticmethod
+    def request_trend_responses_across_urls(urls, threshold, data_type):
 
         suite_list, test_list, request_list, data = parser.urls_response_parser(urls, data_type)
-        response_table, deviation_table, sheet_names = parser.trend_response_by_request_accross_urls_results(suite_list, test_list, request_list, data, threshold)
+        response_table, deviation_table, sheet_names = parser.trend_response_by_request_across_urls_results(suite_list, test_list, request_list, data, threshold)
         parser.excel_two_tables(response_table, deviation_table, sheet_names, "Jenkins Performance Builds - TrendRequestsCompared.xlsx", 3)
 
-    def test_trend_responses_accross_urls(self, urls, threshold, data_type):
+    @staticmethod
+    def test_trend_responses_across_urls(urls, threshold, data_type):
 
         suite_list, test_list, request_list, data = parser.urls_response_parser(urls, data_type)
-        response_table, deviation_table, sheet_names = parser.trend_response_by_test_accross_urls_results(suite_list, test_list, request_list, data, threshold)
+        response_table, deviation_table, sheet_names = parser.trend_response_by_test_across_urls_results(suite_list, test_list, request_list, data, threshold)
         parser.excel_two_tables(response_table, deviation_table, sheet_names, "Jenkins Performance Builds - TrendTestCompared.xlsx", 3)
 
-    def request_trend_responses_two_urls(self, urls, threshold, data_type):
+    @staticmethod
+    def request_trend_responses_two_urls(urls, threshold, data_type):
 
         suite_list, test_list, request_list, data = parser.urls_response_parser(urls, data_type)
         response_table, deviation_table, sheet_names = parser.trend_response_by_request_two_urls_results(suite_list, test_list, request_list, data, threshold)
         parser.excel_two_tables(response_table, deviation_table, sheet_names, "Jenkins Performance Two Builds - TrendRequestsCompared.xlsx", 3)
 
-    def test_trend_responses_two_urls(self, urls, threshold, data_type):
+    @staticmethod
+    def test_trend_responses_two_urls(urls, threshold, data_type):
         suite_list, test_list, request_list, data = parser.urls_response_parser(urls, data_type)
         response_table, deviation_table, sheet_names = parser.trend_response_by_test_two_urls_results(suite_list, test_list, request_list, data, threshold)
         parser.excel_two_tables(response_table, deviation_table, sheet_names, "Jenkins Performance Two Builds - TrendTestCompared.xlsx", 3)
@@ -127,64 +139,64 @@ class JenkinsCrawler:
             print("\n\nURL list is empty! Please provide valid URLs!\n")
         else:
             try:
-                if option is 1:
+                if option == 1:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.responses_deviations_errors(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 2:
+                elif option == 2:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.responses_over_entered_threshold(urls, threshold, data_type)
                     self.deviations_to_previous_build(urls, data_type)
                     self.request_errors(urls)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 3:
+                elif option == 3:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.responses_over_entered_threshold(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 4:
+                elif option == 4:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.deviations_to_previous_build(urls, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 5:
+                elif option == 5:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.request_errors(urls)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 6:
+                elif option == 6:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.request_responses_stage_view(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 7:
+                elif option == 7:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.request_responses_across_urls(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 8:
+                elif option == 8:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.test_responses_accross_urls(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 9:
+                elif option == 9:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.request_trend_responses_across_urls(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 10:
+                elif option == 10:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
-                    self.test_trend_responses_accross_urls(urls, threshold, data_type)
+                    self.test_trend_responses_across_urls(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 11:
+                elif option == 11:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.request_trend_responses_two_urls(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
 
-                elif option is 12:
+                elif option == 12:
                     print("\nPlease wait, Crawler is Loading Data . . .\n")
                     self.test_trend_responses_two_urls(urls, threshold, data_type)
                     print("\nData Parsing is finished!\n")
@@ -192,26 +204,24 @@ class JenkinsCrawler:
                 else:
                     print("\nPlease enter Valid Crawler option!!!\n")
                     print("Currently supported Crawler Options are:\n")
-                    print("1 - Responses over entered Threshold, Request Responses Better then Previous Job, "
-                          "Request Responses Worse then Previous Job and Error Request Results in single Excel File\n")
-                    print("2 - Responses over entered Threshold, Request Responses Better then Previous Job, "
-                          "Request Responses Worse then Previous Job and Error Request Results in separate Excel Files\n")
-                    print("3 - Responses over entered Threshold Results in single Excel File\n")
-                    print("4 - Request Responses Better then in Previous Job and "
-                          "Request Responses Worse then in Previous Job Results in single Excel File\n")
+                    print("1 - Responses over entered Threshold, Request Responses Better than Previous Job, Request Responses Worse than Previous Job and Error Request Results per single URL in single Excel File\n")
+                    print("2 - Responses over entered Threshold, Request Responses Better then Previous Job, Request Responses Worse then Previous Job and Error Request Results per single URL in separate Excel Files\n")
+                    print("3 - Responses over entered Threshold Results per single URL in single Excel File\n")
+                    print("4 - Request Responses Better than Previous and Request Responses Worse than Previous Results per single URL in single Excel File\n")
                     print("5 - Error Requests Results in single Excel File\n")
-                    print("6 - Compared Response and Deviation Results per Test Suite "
-                          "implemented as Jenkins Staging Test Run URLs\n")
-                    print("7 - Compared Response and Deviation to Previous Job Results per Request for provided Jenkins Test Run URLs\n")
-                    print("8 - Compared Response and Deviation to Previous Job Results per Test for provided Jenkins Test Run URLs\n")
-                    print("9 - Trend Compared Response and Deviation to Previous Job Results per Request for provided Jenkins Test Run URLs\n")
-                    print("10 - Trend Compared Response and Deviation to Previous Job Results per Test for provided Jenkins Test Run URLs\n")
-                    print("11 - Trend Compared Responses and Deviations for Two provided URLs per Request\n")
-                    print("12 - Trend Compared Responses and Deviations for Two provided URLs per Test\n")
+                    print("6 - Trend Compared Response and Deviation to Previous Results per URL implemented as Jenkins Staging Test Run\n")
+                    print("7 - Compared Response and Deviation to Previous Job Results per Request for up to 5 provided Jenkins Test Run URLs\n")
+                    print("8 - Compared Response and Deviation to Previous Job Results per Test for up to 5 provided Jenkins Test Run URLs\n")
+                    print("9 - Trend Compared Response for limitless number of provided Jenkins Test Run URLs and Deviation to Previous Job Results per Request\n")
+                    print("10 - Trend Compared Response for limitless number of provided Jenkins Test Run URLs and Deviation to Previous Job Results per Test\n")
+                    print("11 - Trend Compared Responses and Deviations for exactly 2 provided URLs per Request\n")
+                    print("12 - Trend Compared Responses and Deviations for exactly 2 provided URLs per Test\n")
                     print("\n Limitations:\n")
-                    print("    - If there isn't Previous Jenkins Test Run Previous Response Time will be invalid because it will be the same as Current Response Time")
+                    print("    - If there isn't Previous Jenkins Test Run Previous Response Time will be invalid because it will be the same as Current Response Time\n")
                     print("    - Sheet Names, Request and Suite Title Graph Names are limited to 31 chars due to Excel limitations\n")
                     print("    - Request and Test Names shouldn't contain next chars: '[]:*?/\\'\n")
+                    print("    - In options 7 and 8 URL Number is limited to 5 due to excel graph limitations\n")
+                    print("    - In options 11 and 12 deviation is calculated between two provided Runs thus option is limited to 2 URLs'\n")
 
             except PermissionError:
                 print("\nWARNING: PLEASE CLOSE ALL OPENED EXCEL FILES AND RERUN CRAWLER IN ORDER TO GET RESULTS IN EXCEL!!!\n")

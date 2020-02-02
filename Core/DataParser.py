@@ -6,10 +6,11 @@
  =======================================================================================================================
  File name: DataParser.py
  Author: Sava Grkovic
+ Team: Integration QA
  Create Date: 17/9/2018
  Purpose: Parsing of Jenkins Performance Plugin data obtained by pandas lib
  =======================================================================================================================
- Last Modified: 11/4/2019
+ Last Modified: 30/1/2020
  Modified by: Sava Grkovic
 ========================================================================================================================
 '''
@@ -23,7 +24,8 @@ core = Core.DataGetter()
 
 class DataParser:
 
-    def url_parser(self, url):
+    @staticmethod
+    def url_parser(url):
 
         suite_title, test_titles, tables = core.url_getter(url)
 
@@ -76,7 +78,8 @@ class DataParser:
                 self.response_with_deviation_trend_plotting(writer, sheet, dfs)
         writer.save()
 
-    def auto_align_excel_columns(self, writer, sheet, dfs):
+    @staticmethod
+    def auto_align_excel_columns(writer, sheet, dfs):
 
         width = []
         index = []
@@ -91,9 +94,10 @@ class DataParser:
                     len(str(series.name)) + 2))
                 width.append(max_len)
                 index.append(idx)
-        worksheet.set_column('A:Z', max(width) + 2, centre_format)
+        worksheet.set_column('A:XFD', max(width) + 2, centre_format)
 
-    def response_and_deviation_coloring(self, writer, sheet, dfs):
+    @staticmethod
+    def response_and_deviation_coloring(writer, sheet, dfs):
 
         response_format = {'type': '3_color_scale',
                            'min_color': "#FBEA60",
@@ -123,7 +127,8 @@ class DataParser:
 
         return last_row
 
-    def deviation_coloring(self, writer, sheet, dfs, row_counter=0):
+    @staticmethod
+    def deviation_coloring(writer, sheet, dfs, row_counter=0):
 
         deviation_format = {'type': 'data_bar',
                             'bar_color': 'red',
@@ -145,7 +150,8 @@ class DataParser:
             else:
                 last_row = dimension[0] + row_counter
 
-    def response_deviation_coloring(self, writer, sheet, dfs):
+    @staticmethod
+    def response_deviation_coloring(writer, sheet, dfs):
 
         response_format = {'type': '3_color_scale',
                            'min_color': "#FBEA60",
@@ -186,7 +192,8 @@ class DataParser:
         df = [dfs[2], dfs[3]]
         self.deviation_coloring(writer, sheet, df, last_row)
 
-    def response_plotting(self, writer, sheet, dfs):
+    @staticmethod
+    def response_plotting(writer, sheet, dfs):
 
         workbook = writer.book
         worksheet = writer.sheets[sheet]
@@ -224,7 +231,8 @@ class DataParser:
             column_chart.set_y_axis({'name': 'Average Response Time (ms)'})
             worksheet.insert_chart(last_row + dfs[1].shape[0] + 6, 0, column_chart, {'x_offset': 75, 'y_offset': 10})
 
-    def response_trend_plotting(self, writer, sheet, dfs):
+    @staticmethod
+    def response_trend_plotting(writer, sheet, dfs):
 
         workbook = writer.book
         worksheet = writer.sheets[sheet]
@@ -252,7 +260,8 @@ class DataParser:
             line_chart.set_y_axis({'name': 'Average Response Time (ms)'})
             worksheet.insert_chart(last_row + dfs[1].shape[0] + 6, 0, line_chart, {'x_offset': 75, 'y_offset': 10})
 
-    def response_with_deviation_plotting(self, writer, sheet, dfs):
+    @staticmethod
+    def response_with_deviation_plotting(writer, sheet, dfs):
 
         workbook = writer.book
         worksheet = writer.sheets[sheet]
@@ -300,7 +309,8 @@ class DataParser:
             column_chart.set_y_axis({'name': 'Average Response Time (ms)'})
             worksheet.insert_chart(last_row + second[0] + 5, last_second_col, column_chart, {'x_offset': 75, 'y_offset': 10})
 
-    def response_with_deviation_trend_plotting(self, writer, sheet, dfs):
+    @staticmethod
+    def response_with_deviation_trend_plotting(writer, sheet, dfs):
 
         workbook = writer.book
         worksheet = writer.sheets[sheet]
@@ -340,7 +350,8 @@ class DataParser:
             line_chart.set_y_axis({'name': 'Average Response Time (ms)'})
             worksheet.insert_chart(last_row + second[0] + 44, last_second_col, line_chart, {'x_offset': 75, 'y_offset': 10})
 
-    def response_above_threshold_parser(self, titles, tables, threshold, data_type):
+    @staticmethod
+    def response_above_threshold_parser(titles, tables, threshold, data_type):
 
         i = 0
         title = []
@@ -366,7 +377,8 @@ class DataParser:
 
         return title, request, response, previous, deviation, rows
 
-    def response_results(self, titles, request, responses, previous, deviation, rows, threshold):
+    @staticmethod
+    def response_results(titles, request, responses, previous, deviation, rows, threshold):
 
         i = 0
         table = []
@@ -396,7 +408,8 @@ class DataParser:
 
         return table, sheet_name
 
-    def deviation_parser(self, titles, tables, data_type):
+    @staticmethod
+    def deviation_parser(titles, tables, data_type):
 
         i = 0
         worse_rows = []
@@ -422,7 +435,8 @@ class DataParser:
 
         return title, worse_request, worse, worse_rows, better_request, better, better_rows
 
-    def deviation_results(self, titles, worse_requests, worse, worse_rows, better_requests, better, better_rows):
+    @staticmethod
+    def deviation_results(titles, worse_requests, worse, worse_rows, better_requests, better, better_rows):
 
         i = 0
         table1 = []
@@ -465,7 +479,8 @@ class DataParser:
 
         return table1, table2, sheet_name
 
-    def errors_parser(self, titles, tables):
+    @staticmethod
+    def errors_parser(titles, tables):
 
         i = 0
         rows = []
@@ -503,7 +518,8 @@ class DataParser:
 
         return title, request, errors_percentage, errors_deviation, codes, codes_old, rows, flag
 
-    def errors_result(self, titles, error_requests, errors_percentage, errors_deviation, codes, old_codes, rows, flag):
+    @staticmethod
+    def errors_result(titles, error_requests, errors_percentage, errors_deviation, codes, old_codes, rows, flag):
 
         table = []
         sheet_name = []
@@ -535,7 +551,8 @@ class DataParser:
 
         return table, sheet_name
 
-    def response_parser(self, tables, data_type):
+    @staticmethod
+    def response_parser(tables, data_type):
 
         i = 0
         request = []
@@ -558,7 +575,8 @@ class DataParser:
 
         return request, response, previous, deviation, rows
 
-    def response_by_request_stage_results(self, suite_title, titles, request, responses, previous, deviation, rows, threshold):
+    @staticmethod
+    def response_by_request_stage_results(suite_title, titles, request, responses, deviation, rows, threshold):
 
         response_table = []
         deviation_table = []
@@ -572,8 +590,7 @@ class DataParser:
         i = 0
         for title in titles:
             dict_response['Request Name'] = request[i]
-            dict_response[title + " - Previous Build"] = previous[i]
-            dict_response[title + " - Current Build"] = responses[i]
+            dict_response[title] = responses[i]
             dict_deviation['Request Name'] = request[i]
             dict_deviation[title] = deviation[i]
             i += 1
@@ -631,7 +648,8 @@ class DataParser:
 
         return suite_list, test_list, request_list, data
 
-    def response_by_request_accross_urls_results(self, suite_list, test_list, request_list, data, threshold):
+    @staticmethod
+    def response_by_request_across_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
@@ -706,7 +724,8 @@ class DataParser:
 
         return response_table, deviation_table, sheet_names
 
-    def response_by_test_accross_urls_results(self, suite_list, test_list, request_list, data, threshold):
+    @staticmethod
+    def response_by_test_across_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
@@ -781,7 +800,8 @@ class DataParser:
 
         return response_table, deviation_table, sheet_names
 
-    def trend_response_by_request_accross_urls_results(self, suite_list, test_list, request_list, data, threshold):
+    @staticmethod
+    def trend_response_by_request_across_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
@@ -847,7 +867,8 @@ class DataParser:
 
         return response_table, deviation_table, sheet_names
 
-    def trend_response_by_test_accross_urls_results(self, suite_list, test_list, request_list, data, threshold):
+    @staticmethod
+    def trend_response_by_test_across_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
@@ -913,7 +934,8 @@ class DataParser:
 
         return response_table, deviation_table, sheet_names
 
-    def trend_response_by_test_two_urls_results(self, suite_list, test_list, request_list, data, threshold):
+    @staticmethod
+    def trend_response_by_test_two_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
@@ -955,7 +977,7 @@ class DataParser:
                     print("Option could work only with TWO URLS")
                     break
                 i += 1
-            
+
             deviation_df['Deviations of Suite#1 to Suite#2'] = response_df[str(suite_list[0])] - response_df[str(suite_list[1])]
 
             print("\n")
@@ -981,7 +1003,8 @@ class DataParser:
 
         return response_table, deviation_table, sheet_names
 
-    def trend_response_by_request_two_urls_results(self, suite_list, test_list, request_list, data, threshold):
+    @staticmethod
+    def trend_response_by_request_two_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []

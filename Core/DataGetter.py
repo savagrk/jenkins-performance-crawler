@@ -6,10 +6,11 @@
  =======================================================================================================================
  File name: DataGetter.py
  Author: Sava Grkovic
+ Team: Integration QA
  Create Date: 17/9/2018
  Purpose: Getting specific Jenkins Performance Plugin data obtained by pandas lib
  =======================================================================================================================
- Last Modified: 11/4/2019
+ Last Modified: 30/1/2020
  Modified by: Sava Grkovic
 ========================================================================================================================
 '''
@@ -32,14 +33,16 @@ class DataGetter:
 
         return suite_title, test_titles, tables
 
-    def suite_title(self, page):
+    @staticmethod
+    def suite_title(page):
 
         elements = page.find("ul", {"id": "breadcrumbs"})
         title = elements.find_all("li")[2].text
 
         return title
 
-    def test_titles(self, titles):
+    @staticmethod
+    def test_titles(titles):
 
         start = "Performance Breakdown by URI: "
         end = ".jtl"
@@ -49,33 +52,35 @@ class DataGetter:
 
         return parsed_titles
 
-    def request_name(self, table):
+    @staticmethod
+    def request_name(table):
 
         request_name = table["URI"].tolist()
 
         return request_name
 
-    def response_time_type(self, table, data_type):
+    @staticmethod
+    def response_time_type(table, data_type):
 
-        if data_type is 1:
+        if data_type == 1:
             response = table["Average (ms)"].tolist()
 
-        elif data_type is 2:
+        elif data_type == 2:
             response = table["Median(ms)"].tolist()
 
-        elif data_type is 3:
+        elif data_type == 3:
             response = table["Min(ms)"].tolist()
 
-        elif data_type is 4:
+        elif data_type == 4:
             response = table["Max(ms)"].tolist()
 
-        elif data_type is 5:
+        elif data_type == 5:
             response = table["Line 90.0(ms)"].tolist()
 
-        elif data_type is 6:
+        elif data_type == 6:
             response = table["Line 95.0(ms)"].tolist()
 
-        elif data_type is 7:
+        elif data_type == 7:
             response = table["Line 99.0(ms)"].tolist()
 
         else:
@@ -94,14 +99,15 @@ class DataGetter:
 
         return response_time, deviation
 
-    def http_codes(self, table):
+    @staticmethod
+    def http_codes(table):
 
         current = []
         compared = []
         http_codes = table["Http Code"].tolist()
         for codes in http_codes:
             code = str(codes).split("  ", 1)
-            if len(code) is 2:
+            if len(code) == 2:
                 current.append(code[0])
                 compared.append(code[1])
             else:
@@ -110,7 +116,8 @@ class DataGetter:
 
         return current, compared
 
-    def errors(self, table):
+    @staticmethod
+    def errors(table):
 
         current = []
         compared = []
@@ -122,7 +129,8 @@ class DataGetter:
 
         return current, compared
 
-    def response_above_threshold(self, request_name, response_time, deviation_time, threshold):
+    @staticmethod
+    def response_above_threshold(request_name, response_time, deviation_time, threshold):
 
         i = 0
         rows = 0
@@ -143,7 +151,8 @@ class DataGetter:
 
         return request, response, previous, deviation, rows
 
-    def response_classification(self, request_name, response_time, deviation_time):
+    @staticmethod
+    def response_classification(request_name, response_time, deviation_time):
 
         i = 0
         rows = 0
@@ -163,7 +172,8 @@ class DataGetter:
 
         return request, response, previous, deviation, rows
 
-    def deviation_classification(self, request_name, deviation):
+    @staticmethod
+    def deviation_classification(request_name, deviation):
 
         i = 0
         worse_rows = 0
@@ -186,7 +196,8 @@ class DataGetter:
 
         return worse_request, worse, worse_rows, better_request, better, better_rows
 
-    def error_requests(self, request_name, current, compared, http_codes, old_codes):
+    @staticmethod
+    def error_requests(request_name, current, compared, http_codes, old_codes):
 
         i = 0
         rows = 0

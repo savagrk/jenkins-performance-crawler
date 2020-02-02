@@ -6,10 +6,11 @@
  =======================================================================================================================
  File name: DataProcessor.py
  Author: Sava Grkovic
+ Team: Integration QA
  Create Date: 17/9/2018
  Purpose: Runner for Jenkins Crawler with appropriate set of data
  =======================================================================================================================
- Last Modified: 11/4/2019
+ Last Modified: 30/1/2020
  Modified by: Sava Grkovic
 ========================================================================================================================
 '''
@@ -47,30 +48,36 @@ data_type = 1
     Currently supported Crawler Options are:
         
         1 - Responses over entered Threshold, Request Responses Better than Previous Job, 
-            Request Responses Worse than Previous Job and Error Request Results in single Excel File
+            Request Responses Worse than Previous Job and Error Request Results per single URL in single Excel File
                 
         2 - Responses over entered Threshold, Request Responses Better than Previous Job, 
-            Request Responses Worse than and Error Request Results in separate Excel Files
+            Request Responses Worse than and Error Request Results per single URL in separate Excel Files
                 
-        3 - Responses over entered Threshold Results in single Excel File
+        3 - Responses over entered Threshold Results per single URL 
+            in single Excel File
             
-        4 - Request Responses Better than Previous and Request Responses Worse than Previous Results in single Excel File
+        4 - Request Responses Better than Previous and Request Responses Worse than Previous Results
+            per single URL in single Excel File
             
-        5 - Error Requests Results in single Excel File
+        5 - Error Requests Results per single URL in single Excel File
             
-        6 - Compared Response and Deviation to Previous Job Results per Test Suite implemented as Jenkins Staging Test Run URLs
+        6 - Trend Compared Response and Deviation to Previous Results per URL implemented as Jenkins Staging Test Run 
             
-        7 - Compared Response and Deviation to Previous Job Results per Request for provided Jenkins Test Run URLs
+        7 - Compared Response and Deviation to Previous Job Results per Request 
+            for up to 5 provided Jenkins Test Run URLs
         
-        8 - Compared Response and Deviation to Previous Job Results per Test for provided Jenkins Test Run URLs
+        8 - Compared Response and Deviation to Previous Job Results per Test 
+            for up to 5 provided Jenkins Test Run URLs
         
-        9 - Trend Compared Response and Deviation to Previous Job Results per Request for provided Jenkins Test Run URLs
+        9 - Trend Compared Response for limitless number of provided Jenkins Test Run URLs 
+            and Deviation to Previous Job Results per Request
         
-        10 - Trend Compared Response and Deviation to Previous Job Results per Test for provided Jenkins Test Run URLs
+        10 - Trend Compared Response for limitless number of provided Jenkins Test Run URLs 
+            and Deviation to Previous Job Results per Test
         
-        11 - Trend Compared Responses and Deviations for Two provided URLs per Request
+        11 - Trend Compared Responses and Deviations for exactly 2 provided URLs per Request
         
-        12 - Trend Compared Responses and Deviations for Two provided URLs per Test
+        12 - Trend Compared Responses and Deviations for exactly 2 provided URLs per Test
         
         
     Data Type options:
@@ -93,6 +100,8 @@ data_type = 1
         - If there isn't Previous Jenkins Test Run Previous Response Time will be invalid because it will be the same as Current Response Time
         - Sheet Names, Request and Suite Title Graph Names are limited to 31 chars due to Excel limitations
         - Request and Test Names shouldn't contain next chars: '[]:*?/\\'
+        - In options 7 and 8 URL Number is limited to 5 due to excel graph limitations
+        - In options 11 and 12 deviation is calculated between two provided Runs thus option is limited to 2 URLs
 """
 
 # Crawler Command Line
