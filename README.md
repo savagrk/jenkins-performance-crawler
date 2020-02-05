@@ -76,7 +76,7 @@ In DataProcessor.py set **URLs**, **crawler_option**, **data_type** and **thresh
 ## Required Python and Libraries:
    
 * Python 3.7
-* pandas (v.23.4 or lower),
+* pandas (v.0.23.4 or lower),
 * requests,
 * beautifulsoup4,
 * lxml,
