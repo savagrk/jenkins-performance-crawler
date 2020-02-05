@@ -80,7 +80,8 @@ In DataProcessor.py set **URLs**, **crawler_option**, **data_type** and **thresh
 * requests,
 * beautifulsoup4,
 * lxml,
-* XlxsWriter.
+* XlxsWriter,
+* vincent.
         
 ## Author
 
