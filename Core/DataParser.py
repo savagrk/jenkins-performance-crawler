@@ -1,4 +1,4 @@
-'''
+"""
 ========================================================================================================================
  Interpreter: !/usr/local/bin/python
  Coding: utf-8
@@ -10,10 +10,10 @@
  Create Date: 17/9/2018
  Purpose: Parsing of Jenkins Performance Plugin data obtained by pandas lib
  =======================================================================================================================
- Last Modified: 30/1/2020
+ Last Modified: 4/2/2020
  Modified by: Sava Grkovic
 ========================================================================================================================
-'''
+"""
 
 import pandas as pd
 from Core import DataGetter as Core
@@ -559,29 +559,31 @@ class DataParser:
         response = []
         previous = []
         deviation = []
+        error_percentage = []
         rows = []
         for table in tables:
             request_name = core.request_name(table)
             response_time, deviation_int = core.response_time(table, data_type)
-            request_part, response_part, previous_part, deviation_part, rows_part = core.response_classification(request_name,
-                                                                                                                 response_time,
-                                                                                                                 deviation_int)
+            current, compared = core.errors(table)
+            request_part, response_part, previous_part, deviation_part, percentage, rows_part = core.response_classification(request_name, response_time, deviation_int, current)
+
             request.append(request_part)
             response.append(response_part)
             previous.append(previous_part)
             deviation.append(deviation_part)
+            error_percentage.append(percentage)
             rows.append(rows_part)
             i += 1
 
-        return request, response, previous, deviation, rows
+        return request, response, previous, deviation, error_percentage, rows
 
     @staticmethod
-    def response_by_request_stage_results(suite_title, titles, request, responses, deviation, rows, threshold):
+    def response_by_request_stage_results(suite_title, titles, request, responses, error_percentage, rows, threshold):
 
         response_table = []
-        deviation_table = []
+        errors_table = []
         dict_response = {}
-        dict_deviation = {}
+        dict_errors = {}
         print("\n")
         print("SuiteName: " + suite_title)
         print("---------------------------------------------------------------------------------------------------")
@@ -591,8 +593,8 @@ class DataParser:
         for title in titles:
             dict_response['Request Name'] = request[i]
             dict_response[title] = responses[i]
-            dict_deviation['Request Name'] = request[i]
-            dict_deviation[title] = deviation[i]
+            dict_errors['Request Name'] = request[i]
+            dict_errors[title] = error_percentage[i]
             i += 1
 
         df1 = pd.DataFrame(dict_response, index=pd.Index(range(1, max(rows) + 1, 1), name="Responses over " + str(threshold) + " ms"))
@@ -603,15 +605,15 @@ class DataParser:
             df1 = pd.DataFrame({"Results": "☺ All Requests are within the Expected Response Time in " + suite_title + "!!! ☺"},
                                index=pd.Index(range(1, 2, 1), name="Responses over " + str(threshold) + " ms"))
 
-        df2 = pd.DataFrame(dict_deviation, index=pd.Index(range(1, max(rows) + 1, 1), name="Deviations [ms]"))
+        df2 = pd.DataFrame(dict_errors, index=pd.Index(range(1, max(rows) + 1, 1), name="Errors Percentage [%]"))
 
         print(df1.to_string() + "\n\n")
-        print("Deviations in ms:\n")
+        print("Errors in %:\n")
         print(df2.to_string() + "\n")
         response_table.append(df1)
-        deviation_table.append(df2)
+        errors_table.append(df2)
 
-        return response_table, deviation_table
+        return response_table, errors_table
 
     def urls_response_parser(self, urls, data_type):
 
@@ -623,9 +625,9 @@ class DataParser:
         for url in urls:
             suite_title, titles, tables = self.url_parser(url)
             suite_title = "Suite#" + str(i) + ": " + suite_title
-            suite_requests, suite_responses, suite_previous, suite_deviations, old_row = self.response_parser(tables, data_type)
-            for title, requests, responses, previous, deviations in zip(titles, suite_requests, suite_responses, suite_previous, suite_deviations):
-                for request, response, prev, deviation in zip(requests, responses, previous, deviations):
+            suite_requests, suite_responses, suite_previous, suite_deviations, suite_error_percentages, old_row = self.response_parser(tables, data_type)
+            for title, requests, responses, previous, deviations, errors in zip(titles, suite_requests, suite_responses, suite_previous, suite_deviations, suite_error_percentages):
+                for request, response, prev, deviation, error in zip(requests, responses, previous, deviations, errors):
                     dictionary = {}
                     if request != 'All URIs':
                         dictionary['SuiteName'] = suite_title
@@ -634,6 +636,7 @@ class DataParser:
                         dictionary['PreviousTime'] = prev
                         dictionary['ResponseTime'] = response
                         dictionary['Deviation'] = deviation
+                        dictionary['Errors'] = error
                         data.append(dictionary)
                         request_list.append(request)
                 test_list.append(title)
@@ -653,52 +656,52 @@ class DataParser:
 
         sheet_names = []
         response_table = []
-        deviation_table = []
+        errors_table = []
         for request in request_list:
             response_dfs = []
             previous_dfs = []
-            deviation_dfs = []
+            errors_dfs = []
             for suite in suite_list:
                 rows = 0
                 tests = []
                 dict_response = {}
                 dict_previous = {}
-                dict_deviation = {}
+                dict_errors = {}
                 response_list = []
                 previous_list = []
-                deviation_list = []
+                errors_list = []
                 for test in test_list:
                     for dictionary in data:
                         if dictionary['Request Name'] == request and dictionary['Test Name'] == test and dictionary['SuiteName'] == suite:
                             tests.append(dictionary['Test Name'])
                             previous_list.append(dictionary['PreviousTime'])
                             response_list.append(dictionary['ResponseTime'])
-                            deviation_list.append(dictionary['Deviation'])
+                            errors_list.append(dictionary['Errors'])
                             rows += 1
 
                 dict_previous['Test Name'] = tests
                 dict_previous[suite + " - Previous Build"] = previous_list
                 dict_response['Test Name'] = tests
                 dict_response[suite + " - Current Build"] = response_list
-                dict_deviation['Test Name'] = tests
-                dict_deviation[suite] = deviation_list
+                dict_errors['Test Name'] = tests
+                dict_errors[suite] = errors_list
 
                 df1 = pd.DataFrame(dict_response, index=pd.Index(range(1, rows + 1, 1), name="Responses over " + str(threshold) + " ms"))
                 response_dfs.append(df1)
                 df2 = pd.DataFrame(dict_previous, index=pd.Index(range(1, rows + 1, 1), name="Responses over " + str(threshold) + " ms"))
                 previous_dfs.append(df2)
-                df3 = pd.DataFrame(dict_deviation, index=pd.Index(range(1, rows + 1, 1), name="Deviations [ms]"))
-                deviation_dfs.append(df3)
+                df3 = pd.DataFrame(dict_errors, index=pd.Index(range(1, rows + 1, 1), name="Errors Percentage [%]"))
+                errors_dfs.append(df3)
 
             i = 0
-            for response, previous, deviation in zip(response_dfs, previous_dfs, deviation_dfs):
+            for response, previous, error in zip(response_dfs, previous_dfs, errors_dfs):
                 if i == 0:
                     response_df = pd.merge(previous, response, how='outer', on='Test Name')
-                    deviation_df = deviation
+                    errors_df = error
                 else:
                     response_df = pd.merge(response_df, previous, how='outer', on='Test Name')
                     response_df = pd.merge(response_df, response, how='outer', on='Test Name')
-                    deviation_df = pd.merge(deviation_df, deviation, how='outer', on='Test Name')
+                    errors_df = pd.merge(errors_df, error, how='outer', on='Test Name')
                 i += 1
 
             print("\n")
@@ -714,67 +717,67 @@ class DataParser:
                                            index=pd.Index(range(1, 2, 1), name="Responses over " + str(threshold) + " ms"))
             print(response_df.to_string() + "\n\n")
 
-            print("Deviations in ms:\n")
-            deviation_df.index.names = ["Deviations(ms)"]
-            print(deviation_df.to_string() + "\n")
+            print("Errors in %:\n")
+            errors_df.index.names = ["Errors Percentage [%]"]
+            print(errors_df.to_string() + "\n")
 
             response_table.append(response_df)
-            deviation_table.append(deviation_df)
+            errors_table.append(errors_df)
             sheet_names.append(request[:31])
 
-        return response_table, deviation_table, sheet_names
+        return response_table, errors_table, sheet_names
 
     @staticmethod
     def response_by_test_across_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
-        deviation_table = []
+        errors_table = []
         for test in test_list:
             response_dfs = []
             previous_dfs = []
-            deviation_dfs = []
+            errors_dfs = []
             for suite in suite_list:
                 rows = 0
                 requests = []
                 dict_response = {}
                 dict_previous = {}
-                dict_deviation = {}
+                dict_errors = {}
                 response_list = []
                 previous_list = []
-                deviation_list = []
+                errors_list = []
                 for request in request_list:
                     for dictionary in data:
                         if dictionary['Request Name'] == request and dictionary['Test Name'] == test and dictionary['SuiteName'] == suite:
                             requests.append(dictionary['Request Name'])
                             previous_list.append(dictionary['PreviousTime'])
                             response_list.append(dictionary['ResponseTime'])
-                            deviation_list.append(dictionary['Deviation'])
+                            errors_list.append(dictionary['Errors'])
                             rows += 1
 
                 dict_previous['Request Name'] = requests
                 dict_previous[suite + " - Previous Build"] = previous_list
                 dict_response['Request Name'] = requests
                 dict_response[suite + " - Current Build"] = response_list
-                dict_deviation['Request Name'] = requests
-                dict_deviation[suite] = deviation_list
+                dict_errors['Request Name'] = requests
+                dict_errors[suite] = errors_list
 
                 df1 = pd.DataFrame(dict_response, index=pd.Index(range(1, rows + 1, 1), name="Responses over " + str(threshold) + " ms"))
                 response_dfs.append(df1)
                 df2 = pd.DataFrame(dict_previous, index=pd.Index(range(1, rows + 1, 1), name="Responses over " + str(threshold) + " ms"))
                 previous_dfs.append(df2)
-                df3 = pd.DataFrame(dict_deviation, index=pd.Index(range(1, rows + 1, 1), name="Deviations [ms]"))
-                deviation_dfs.append(df3)
+                df3 = pd.DataFrame(dict_errors, index=pd.Index(range(1, rows + 1, 1), name="Errors Percentage [%]"))
+                errors_dfs.append(df3)
 
             i = 0
-            for response, previous, deviation in zip(response_dfs, previous_dfs, deviation_dfs):
+            for response, previous, error in zip(response_dfs, previous_dfs, errors_dfs):
                 if i == 0:
                     response_df = pd.merge(previous, response, how='outer', on='Request Name')
-                    deviation_df = deviation
+                    errors_df = error
                 else:
                     response_df = pd.merge(response_df, previous, how='outer', on='Request Name')
                     response_df = pd.merge(response_df, response, how='outer', on='Request Name')
-                    deviation_df = pd.merge(deviation_df, deviation, how='outer', on='Request Name')
+                    errors_df = pd.merge(errors_df, error, how='outer', on='Request Name')
                 i += 1
 
             print("\n")
@@ -790,58 +793,58 @@ class DataParser:
                                            index=pd.Index(range(1, 2, 1), name="Responses over " + str(threshold) + " ms"))
             print(response_df.to_string() + "\n\n")
 
-            print("Deviations in ms:\n")
-            deviation_df.index.names = ["Deviations(ms)"]
-            print(deviation_df.to_string() + "\n")
+            print("Errors in %:\n")
+            errors_df.index.names = ["Errors Percentage [%]"]
+            print(errors_df.to_string() + "\n")
 
             response_table.append(response_df)
-            deviation_table.append(deviation_df)
+            errors_table.append(errors_df)
             sheet_names.append(test[:31])
 
-        return response_table, deviation_table, sheet_names
+        return response_table, errors_table, sheet_names
 
     @staticmethod
     def trend_response_by_request_across_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
-        deviation_table = []
+        errors_table = []
         for request in request_list:
             response_dfs = []
-            deviation_dfs = []
+            errors_dfs = []
             for suite in suite_list:
                 rows = 0
                 tests = []
                 dict_response = {}
-                dict_deviation = {}
+                dict_errors = {}
                 response_list = []
-                deviation_list = []
+                errors_list = []
                 for test in test_list:
                     for dictionary in data:
                         if dictionary['Request Name'] == request and dictionary['Test Name'] == test and dictionary['SuiteName'] == suite:
                             tests.append(dictionary['Test Name'])
                             response_list.append(dictionary['ResponseTime'])
-                            deviation_list.append(dictionary['Deviation'])
+                            errors_list.append(dictionary['Errors'])
                             rows += 1
 
                 dict_response['Test Name'] = tests
                 dict_response[suite] = response_list
-                dict_deviation['Test Name'] = tests
-                dict_deviation[suite] = deviation_list
+                dict_errors['Test Name'] = tests
+                dict_errors[suite] = errors_list
 
                 df1 = pd.DataFrame(dict_response, index=pd.Index(range(1, rows + 1, 1), name="Responses over " + str(threshold) + " ms"))
                 response_dfs.append(df1)
-                df3 = pd.DataFrame(dict_deviation, index=pd.Index(range(1, rows + 1, 1), name="Deviations [ms]"))
-                deviation_dfs.append(df3)
+                df3 = pd.DataFrame(dict_errors, index=pd.Index(range(1, rows + 1, 1), name="Errors Percentage [%]"))
+                errors_dfs.append(df3)
 
             i = 0
-            for response, deviation in zip(response_dfs, deviation_dfs):
+            for response, error in zip(response_dfs, errors_dfs):
                 if i == 0:
                     response_df = response
-                    deviation_df = deviation
+                    errors_df = error
                 else:
                     response_df = pd.merge(response_df, response, how='outer', on='Test Name')
-                    deviation_df = pd.merge(deviation_df, deviation, how='outer', on='Test Name')
+                    errors_df = pd.merge(errors_df, error, how='outer', on='Test Name')
                 i += 1
 
             print("\n")
@@ -857,58 +860,58 @@ class DataParser:
                                            index=pd.Index(range(1, 2, 1), name="Responses over " + str(threshold) + " ms"))
             print(response_df.to_string() + "\n\n")
 
-            print("Deviations in ms:\n")
-            deviation_df.index.names = ["Deviations(ms)"]
-            print(deviation_df.to_string() + "\n")
+            print("Errors in %:\n")
+            errors_df.index.names = ["Errors Percentage [%]"]
+            print(errors_df.to_string() + "\n")
 
             response_table.append(response_df)
-            deviation_table.append(deviation_df)
+            errors_table.append(errors_df)
             sheet_names.append(request[:31])
 
-        return response_table, deviation_table, sheet_names
+        return response_table, errors_table, sheet_names
 
     @staticmethod
     def trend_response_by_test_across_urls_results(suite_list, test_list, request_list, data, threshold):
 
         sheet_names = []
         response_table = []
-        deviation_table = []
+        errors_table = []
         for test in test_list:
             response_dfs = []
-            deviation_dfs = []
+            errors_dfs = []
             for suite in suite_list:
                 rows = 0
                 requests = []
                 dict_response = {}
-                dict_deviation = {}
+                dict_errors = {}
                 response_list = []
-                deviation_list = []
+                errors_list = []
                 for request in request_list:
                     for dictionary in data:
                         if dictionary['Request Name'] == request and dictionary['Test Name'] == test and dictionary['SuiteName'] == suite:
                             requests.append(dictionary['Request Name'])
                             response_list.append(dictionary['ResponseTime'])
-                            deviation_list.append(dictionary['Deviation'])
+                            errors_list.append(dictionary['Errors'])
                             rows += 1
 
                 dict_response['Request Name'] = requests
                 dict_response[suite] = response_list
-                dict_deviation['Request Name'] = requests
-                dict_deviation[suite] = deviation_list
+                dict_errors['Request Name'] = requests
+                dict_errors[suite] = errors_list
 
                 df1 = pd.DataFrame(dict_response, index=pd.Index(range(1, rows + 1, 1), name="Responses over " + str(threshold) + " ms"))
                 response_dfs.append(df1)
-                df3 = pd.DataFrame(dict_deviation, index=pd.Index(range(1, rows + 1, 1), name="Deviations [ms]"))
-                deviation_dfs.append(df3)
+                df3 = pd.DataFrame(dict_errors, index=pd.Index(range(1, rows + 1, 1), name="Errors Percentage [%]"))
+                errors_dfs.append(df3)
 
             i = 0
-            for response, deviation in zip(response_dfs, deviation_dfs):
+            for response, error in zip(response_dfs, errors_dfs):
                 if i == 0:
                     response_df = response
-                    deviation_df = deviation
+                    errors_df = error
                 else:
                     response_df = pd.merge(response_df, response, how='outer', on='Request Name')
-                    deviation_df = pd.merge(deviation_df, deviation, how='outer', on='Request Name')
+                    errors_df = pd.merge(errors_df, error, how='outer', on='Request Name')
                 i += 1
 
             print("\n")
@@ -924,15 +927,15 @@ class DataParser:
                                            index=pd.Index(range(1, 2, 1), name="Responses over " + str(threshold) + " ms"))
             print(response_df.to_string() + "\n\n")
 
-            print("Deviations in ms:\n")
-            deviation_df.index.names = ["Deviations(ms)"]
-            print(deviation_df.to_string() + "\n")
+            print("Errors in %:\n")
+            errors_df.index.names = ["Errors Percentage [%]"]
+            print(errors_df.to_string() + "\n")
 
             response_table.append(response_df)
-            deviation_table.append(deviation_df)
+            errors_table.append(errors_df)
             sheet_names.append(test[:31])
 
-        return response_table, deviation_table, sheet_names
+        return response_table, errors_table, sheet_names
 
     @staticmethod
     def trend_response_by_test_two_urls_results(suite_list, test_list, request_list, data, threshold):
@@ -994,7 +997,7 @@ class DataParser:
             print(response_df.to_string() + "\n\n")
 
             print("Deviations in ms:\n")
-            deviation_df.index.names = ["Deviations(ms)"]
+            deviation_df.index.names = ["Deviations [ms]"]
             print(deviation_df.to_string() + "\n")
 
             response_table.append(response_df)
@@ -1065,7 +1068,7 @@ class DataParser:
             print(response_df.to_string() + "\n\n")
 
             print("Deviations in ms:\n")
-            deviation_df.index.names = ["Deviations(ms)"]
+            deviation_df.index.names = ["Deviations [ms]"]
             print(deviation_df.to_string() + "\n")
 
             response_table.append(response_df)

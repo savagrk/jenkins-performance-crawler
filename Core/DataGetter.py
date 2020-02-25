@@ -1,4 +1,4 @@
-'''
+"""
 ========================================================================================================================
  Interpreter: !/usr/local/bin/python
  Coding: utf-8
@@ -10,10 +10,10 @@
  Create Date: 17/9/2018
  Purpose: Getting specific Jenkins Performance Plugin data obtained by pandas lib
  =======================================================================================================================
- Last Modified: 30/1/2020
+ Last Modified: 4/2/2020
  Modified by: Sava Grkovic
 ========================================================================================================================
-'''
+"""
 
 import requests
 import pandas as pd
@@ -152,7 +152,7 @@ class DataGetter:
         return request, response, previous, deviation, rows
 
     @staticmethod
-    def response_classification(request_name, response_time, deviation_time):
+    def response_classification(request_name, response_time, deviation_time, error_percentage):
 
         i = 0
         rows = 0
@@ -160,17 +160,20 @@ class DataGetter:
         response = []
         previous = []
         deviation = []
+        errors = []
         response_time = list(map(int, response_time))
         deviation_time = list(map(int, deviation_time))
+        error_percentage = list(map(float, error_percentage))
         for time in response_time:
             request.append(request_name[i])
             response.append(time)
             previous.append(response_time[i] - deviation_time[i])
             deviation.append(deviation_time[i])
+            errors.append(error_percentage[i])
             rows += 1
             i += 1
 
-        return request, response, previous, deviation, rows
+        return request, response, previous, deviation, errors, rows
 
     @staticmethod
     def deviation_classification(request_name, deviation):
