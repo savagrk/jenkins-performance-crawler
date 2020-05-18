@@ -6,7 +6,6 @@
  =======================================================================================================================
  File name: JenkinsCrawler.py
  Author: Sava Grkovic
- Team: Integration QA
  Create Date: 17/9/2018
  Purpose: Definition of Jenkins Data Crawler options and functions
  =======================================================================================================================
@@ -209,7 +208,7 @@ class JenkinsCrawler:
                     print("3 - Responses over entered Threshold Results per single URL in single Excel File\n")
                     print("4 - Request Responses Better than Previous and Request Responses Worse than Previous Results per single URL in single Excel File\n")
                     print("5 - Error Requests Results in single Excel File\n")
-                    print("6 - Trend Compared Response and Errors to Previous Results per URL implemented as Jenkins Staging Test Run\n")
+                    print("6 - Trend Compared Response and Errors per URL implemented as Jenkins Staging Test Run\n")
                     print("7 - Compared Response and Errors to Previous Job Results per Request for up to 5 provided Jenkins Test Run URLs\n")
                     print("8 - Compared Response and Errors to Previous Job Results per Test for up to 5 provided Jenkins Test Run URLs\n")
                     print("9 - Trend Compared Response for limitless number of provided Jenkins Test Run URLs and Errors to Previous Job Results per Request\n")

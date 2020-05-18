@@ -6,7 +6,6 @@
  =======================================================================================================================
  File name: DataParser.py
  Author: Sava Grkovic
- Team: Integration QA
  Create Date: 17/9/2018
  Purpose: Parsing of Jenkins Performance Plugin data obtained by pandas lib
  =======================================================================================================================

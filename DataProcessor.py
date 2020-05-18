@@ -6,7 +6,6 @@
  =======================================================================================================================
  File name: DataProcessor.py
  Author: Sava Grkovic
- Team: Integration QA
  Create Date: 17/9/2018
  Purpose: Runner for Jenkins Crawler with appropriate set of data
  =======================================================================================================================
@@ -37,7 +36,7 @@ crawler = Crawler.JenkinsCrawler()
 
         5 - Error Requests Results per single URL in single Excel File
 
-        6 - Trend Compared Response and Errors to Previous Results per URL implemented as Jenkins Staging Test Run 
+        6 - Trend Compared Response and Errors per URL implemented as Jenkins Staging Test Run 
 
         7 - Compared Response and Errors to Previous Job Results per Request 
             for up to 5 provided Jenkins Test Run URLs
@@ -93,15 +92,15 @@ data_type = 1
 # Setup of Links for Crawling
 crawler_urls = [
                 #   APP1
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
                 #   APP 2
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
-                #   "http://jenkins.adress/view/project.name/job/job.name/lastBuild/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
+                #   "http://jenkins.adress/view/project.name/job/job.name/build.number/performance/",
                 ]
 
 

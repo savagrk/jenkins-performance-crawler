@@ -30,7 +30,7 @@ In DataProcessor.py set **URLs**, **crawler_option**, **data_type** and **thresh
             
  **5** - Error Requests Results per single URL in single Excel File
             
- **6** - Trend Compared Response and Errors to Previous Results per URL implemented as Jenkins Staging Test Run 
+ **6** - Trend Compared Response and Errors per URL implemented as Jenkins Staging Test Run 
             
  **7** - Compared Response and Errors to Previous Job Results per Request 
             for up to 5 provided Jenkins Test Run URLs
